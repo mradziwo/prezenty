@@ -1,0 +1,103 @@
+import random
+import subprocess
+import sys
+import matplotlib.pyplot as plt
+
+osoby={0:'Babcia',
+       1:'Aga',
+       2:'Mama',
+       3:'Tato',
+       4:'Ola',
+       5:'Jakub',
+       6:'Dudus',
+       7:'Danka',
+       8:'Michal',
+       9:'Dorotka'}
+class os:
+    babcia=0
+    aga=1
+    mama=2
+    tato=3
+    ola=4
+    jakub=5
+    dudus=6
+    danka=7
+    michal=8
+    dorotka=9
+    nobody=99
+def has_common(list1, list2):
+
+    for element in list1:
+        if element in list2: return(True)
+    return(False)
+
+
+def check_rules(wybory):
+    for i in range(len(wybory)):
+
+#narcism
+        if i in wybory[i]: return(1)
+#double present
+        if set(wybory[i])==set([os.mama,os.tato]) : return(2)
+        if set(wybory[i])==set([os.ola,os.jakub]) : return(2)
+        if set(wybory[i])==set([os.dudus,os.dorotka]) : return(2)
+        if set(wybory[i])==set([os.aga, os.michal]): return(2)
+#generosity
+        if wybory[i][0]==wybory[i][1]:return(5)
+
+#compound present
+
+    if has_common(wybory[os.michal], wybory[os.aga])|\
+       has_common(wybory[os.mama], wybory[os.tato])|\
+       has_common(wybory[os.ola],wybory[os.jakub])|\
+       has_common(wybory[os.dudus],wybory[os.dorotka]): return(7)
+#inbreed
+    if (os.aga in wybory[os.michal]) | \
+       (os.michal in wybory[os.aga]) | \
+       (os.ola in wybory[os.jakub]) |\
+       (os.jakub in wybory[os.ola]) |\
+       (os.dorotka in wybory[os.dudus]) |\
+       (os.dudus in wybory[os.dorotka]) |\
+       (os.mama in wybory[os.tato]) |\
+       (os.tato in wybory[os.mama]): return(4)
+#babcia
+    if os.ola in wybory[os.babcia]: return(8)
+    return(0)
+
+def losuj1 (wybory,prezenty):
+    for proba in range(0,10000):
+        for kto in range(0,10):
+            for numer in range (0,2):
+                l=len(prezenty)
+                if l>1:
+                    los=random.randrange(0,l)
+                else:
+                    los=0
+                wybory[kto][numer]=prezenty.pop(los)
+        if check_rules(wybory)==0:
+            print proba
+            prezenty = [0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9]
+            return(wybory)
+        else:
+            prezenty = [0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9]
+    prezenty = [0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9]
+    return(0)
+
+
+
+
+prezenty = [0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9]
+wybory=[[os.nobody]*2]*10
+wybory= [[99,98], [97,96],[95,94],[93,92],[91,90],[89,88],[87,86],[85,84],[83,82],[81,80]]
+
+wynik= losuj1(wybory,prezenty)
+for osoba in range(0,10):
+    print osoby[osoba], ":", osoby[wynik[osoba][0]],osoby[wynik[osoba][1]]
+print wynik
+maile=["gwiazdor.rakow.2012@gmail.com"]*9
+maile=["aleksandra@radziwon.pl", "agnieszka@radziwon.pl","janka@radziwon.pl","tomek@radziwon.pl","a.gasiorowska@outlook.com","j.s.gasiorowski@gmail.com","jakub.radziwon@gmail.com","danutaszemiel@o2.pl","mradziwo@gmail.com", "dorota@radziwon.pl"]
+
+for i in range(0,10):
+        print ("Mail sent to " + osoby[i] + " at " + maile[i])
+        cmd="./mail.py "+maile[i]+" "+str(wynik[i][0])+" "+str(wynik[i][1])
+        subprocess.call([sys.executable, 'mail.py', maile[i], str(osoby[wynik[i][0]]), str(osoby[wynik[i][1]])])
