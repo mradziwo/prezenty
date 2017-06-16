@@ -49,7 +49,7 @@ session = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
 session.ehlo()
 session.starttls()
 session.ehlo
-session.login('gwiazdor.rakow.2012', 'gwiazdor')
+session.login('gwiazdor.rakow.2012', 'gwiazdor.skasujkropka')
 
 session.sendmail(sender, recipient, headers + "\r\n\r\n" + body)
 session.quit()
